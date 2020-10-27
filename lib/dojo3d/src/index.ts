@@ -1,1 +1,1 @@
-export * from './lib/world';
+export * from './lib/dojo3d';

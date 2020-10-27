@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Dojo Example</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+
+    <script src="../../build/index.js"></script>
+</head>
+
+<body>
+    <script>
+        var world = new dojo3d.World();
+        world.Create();
+        world.SetupLights();
+        world.AddGround();
+
+        world.AddCube(0.1, 0.1, 0.1, 3, 3, 3);
+        world.LoadModel("https://dojo3d.s3.us-east-1.amazonaws.com/models/characters/phoenix_bird/scene.gltf", 0.005);
+    </script>
+
+</body>
+
+</html>
