@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Dojo Example</title>
+    <title>Dojo 3D</title>
     <style>
         body {
             margin: 0;
@@ -19,13 +19,39 @@
 
 <body>
     <script>
-        var world = new dojo3d.World();
-        world.Create();
-        world.SetupLights();
-        world.AddGround();
 
-        world.AddCube(0.1, 0.1, 0.1, 3, 3, 3);
-        world.LoadModel("https://dojo3d.s3.us-east-1.amazonaws.com/models/characters/phoenix_bird/scene.gltf", 0.005);
+
+        var world = new dojo3d.World();
+
+        world.fetchPrefabModels().then(async () => {
+
+            //world.create();
+            world.setupLights();
+            //world.addGround();
+
+
+            // prefab models:
+            // "Box Man", "Phoenix Bird", "Hover Bike (The Rocket)","Wipeout 4K"
+
+            //var model = world.getPrefabModelByName("Hover Bike (The Rocket)");
+            //var obj = await world.addSceneObject(model, 0.05);
+            //obj.setScale(0.001);
+
+            var boxMan = world.getPrefabModelByName("Box Man");
+            await world.addSceneObject(boxMan, 0.1);
+
+            //var bookScene = world.getPrefabModelByName("Medieval Fantasy Book");
+            //obj = await world.addSceneObject(bookScene, 0.1);
+
+            var scene = world.getPrefabModelByName("Happy Halloween");
+            obj = await world.addSceneObject(scene, 0.1);
+
+        });
+
+
+            //world.LoadModel("https://dojo3d.s3.us-east-1.amazonaws.com/models/characters/phoenix_bird/scene.gltf", 0.005);
+
+
     </script>
 
 </body>

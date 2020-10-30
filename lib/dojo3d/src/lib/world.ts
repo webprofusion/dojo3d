@@ -1,6 +1,8 @@
 import { AnimationMixer, BoxGeometry, DirectionalLight, Mesh, MeshStandardMaterial, PerspectiveCamera, PlaneBufferGeometry, Scene, sRGBEncoding, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { Model, ModelCatalog } from './Model';
+import { SceneObject } from './SceneObject';
 //import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader'
 
 class World {
@@ -12,21 +14,29 @@ class World {
   mixer: AnimationMixer;
   clips: any;
 
+  modelCatalog: ModelCatalog;
+
+  sceneObjects: SceneObject[] = [];
+
   isWorldCreated = false;
 
   prevTime = 0;
+
+  assetsBaseUrl = "https://dojo3d.s3.amazonaws.com/";
 
   log(msg: string) {
     console.log(msg);
   }
 
-  public World(createWorld = true) {
+  constructor(createWorld = true) {
+    this.sceneObjects = [];
+
     if (createWorld == true) {
-      this.Create();
+      this.create();
     }
   }
 
-  public AddCube(w = 1, h = 1, d = 1, x = 0, y = 0, z = 0) {
+  public addCube(w = 1, h = 1, d = 1, x = 0, y = 0, z = 0) {
     this.log(`Creating and adding cube w:${w},h:${h},d:${d} at x:${x},y:${y},z:${z}`);
 
     var geometry = new BoxGeometry(w, h, d);
@@ -40,7 +50,7 @@ class World {
     return cube;
   }
 
-  public AddGround() {
+  public addGround() {
     const mesh = new Mesh(new PlaneBufferGeometry(100, 100), new MeshStandardMaterial({ color: 0x999999 }));
     mesh.rotation.x = - Math.PI / 2;
     mesh.receiveShadow = true;
@@ -50,32 +60,13 @@ class World {
     return mesh;
   }
 
-  public SetupLights() {
-    /*const light = new AmbientLight(0x404040); // soft white light
-    this.scene.add(light);
-
-    const hemiLight = new HemisphereLight(0xffffff, 0x444444);
-    hemiLight.position.set(0, 20, 0);
-    this.scene.add(hemiLight);
-
-    const dirLight = new DirectionalLight(0xffffff);
-    dirLight.position.set(- 3, 10, - 10);
-    dirLight.castShadow = true;
-    dirLight.shadow.camera.top = 2;
-    dirLight.shadow.camera.bottom = - 2;
-    dirLight.shadow.camera.left = - 2;
-    dirLight.shadow.camera.right = 2;
-    dirLight.shadow.camera.near = 0.1;
-    dirLight.shadow.camera.far = 40;
-
-    this.scene.add(dirLight);*/
-
+  public setupLights() {
     var dirLight = new DirectionalLight(0xffffff, 1);
     dirLight.position.set(5, 2, 8);
     this.scene.add(dirLight);
   }
 
-  public Create() {
+  public create() {
     if (!this.isWorldCreated) {
       this.scene = new Scene();
       this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -95,61 +86,103 @@ class World {
     }
   }
 
-  public LoadModel(gltf: string, scale = 1) {
+  public async fetchPrefabModels() {
+    this.modelCatalog =
+      await fetch(this.assetsBaseUrl + 'models/index.json', {
+        method: 'GET', mode: 'cors', headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/octet-stream'
+        }
+      })
+
+        .then(response => response.json());
+  }
+
+  public getPrefabModel(id: string): Model {
+    return this.modelCatalog.models.find(m => m.id == id);
+  }
+
+  public getPrefabModelByName(name: string): Model {
+    return this.modelCatalog.models.find(m => m.name == name);
+  }
+
+  public async addSceneObject(model: Model, scale = 1) {
+
+    let url = model.path;
+
+    if (!url.startsWith("http")) {
+      url = this.assetsBaseUrl + "models/" + model.path;
+    }
+
+    const obj = await this.loadModel(url, scale);
+
+    var sceneObject = new SceneObject(model, obj);
+
+    this.sceneObjects.push(sceneObject);
+
+    return sceneObject;
+  }
+
+  public async loadModel(gltf: string, scale = 1): Promise<any> {
     var loader = new GLTFLoader();
 
     // var dracoLoader = new DRACOLoader();
     //dracoLoader.setDecoderPath('/examples/js/libs/draco/');
     //loader.setDRACOLoader(dracoLoader);
 
-    loader.load(
-      // resource URL
-      gltf,
-      // called when the resource is loaded
-      (gltf) => {
+    return new Promise((resolve, reject) => {
 
 
-        const scene = gltf.scene || gltf.scenes[0];
-        const clips = gltf.animations || [];
+      loader.load(
+        // resource URL
+        gltf,
+        // called when the resource is loaded
+        (gltf) => {
 
-        //scale new scene
-        scene.scale.set(scale, scale, scale);
 
-        this.setClips(scene, clips);
-        /*
-        gltf.animations; // Array<THREE.AnimationClip>
-        gltf.scene; // THREE.Group
-        gltf.scenes; // Array<THREE.Group>
-        gltf.cameras; // Array<THREE.Camera>
-        gltf.asset; // Object
-        */
+          const scene = gltf.scene || gltf.scenes[0];
+          const clips = gltf.animations || [];
 
-        this.playAllClips();
+          //scale new scene
+          scene.scale.set(scale, scale, scale);
 
-        gltf.scene.scale.set(scale, scale, scale);
+          this.setClips(scene, clips);
+          /*
+          gltf.animations; // Array<THREE.AnimationClip>
+          gltf.scene; // THREE.Group
+          gltf.scenes; // Array<THREE.Group>
+          gltf.cameras; // Array<THREE.Camera>
+          gltf.asset; // Object
+          */
 
-        this.scene.add(gltf.scene);
+          this.playAllClips();
 
-        gltf.animations; // Array<THREE.AnimationClip>
-        gltf.scene; // THREE.Group
-        gltf.scenes; // Array<THREE.Group>
-        gltf.cameras; // Array<THREE.Camera>
-        gltf.asset; // Object
+          gltf.scene.scale.set(scale, scale, scale);
 
-      },
-      // called while loading is progressing
-      (xhr) => {
+          this.scene.add(gltf.scene);
 
-        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+          gltf.animations; // Array<THREE.AnimationClip>
+          gltf.scene; // THREE.Group
+          gltf.scenes; // Array<THREE.Group>
+          gltf.cameras; // Array<THREE.Camera>
+          gltf.asset; // Object
 
-      },
-      // called when loading has errors
-      (error) => {
+          resolve(gltf.scene);
+        },
+        // called while loading is progressing
+        (xhr) => {
 
-        console.log('An error happened:' + error);
+          console.log((xhr.loaded / xhr.total * 100) + '% loaded');
 
-      }
-    );
+        },
+        // called when loading has errors
+        (error) => {
+          reject('An error happened:' + error);
+
+        }
+      );
+
+    });
   }
 
   setClips(obj, clips) {

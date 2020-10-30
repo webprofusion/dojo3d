@@ -1,1 +1,3 @@
-export * from './lib/dojo3d';
+import { World } from "./lib/World";
+
+export { World } 
