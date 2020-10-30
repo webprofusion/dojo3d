@@ -1,0 +1,51 @@
+{
+	"categories": [
+		"characters",
+		"vehicles",
+		"scenes"
+	],
+	"models": [
+		{
+			"id": "9d37a98a-d606-4fc0-97d1-0e99ea3b7830",
+			"name": "Phoenix Bird",
+			"attribution": "https://sketchfab.com/norberto3d;  License: Creative Commons Attribution ",
+			"path": "characters/phoenix_bird/scene.gltf",
+			"category": "characters"
+		},
+		{
+			"id": "9a37a98a-d606-4fc0-97d1-0ea9ea3b7830",
+			"name": "Box Man",
+			"attribution": "Jan Bláha https://github.com/swift502/Sketchbook CC-0 license",
+			"path": "characters/box_man/box_man.glb",
+			"category": "characters"
+		},
+		{
+			"id": "9d37a98a-d606-4fc0-97d1-0e19ea3b7830",
+			"name": "Hover Bike (The Rocket)",
+			"attribution": "https://sketchfab.com/TuppsM; License: Creative Commons Attribution",
+			"path": "vehicles/hover_bike_-_the_rocket/scene.gltf",
+			"category": "vehicles"
+		},
+		{
+			"id": "9d37a98a-d606-4fc0-97d1-0e39ea3b7830",
+			"name": "Wipeout 4K",
+			"attribution": "https://sketchfab.com/Swiss_Fox; License: Creative Commons Attribution-NonCommercial",
+			"path": "vehicles/qi_rd_4k/scene.gltf",
+			"category": "vehicles"
+		},
+		{
+			"id": "sd37a98a-d606-4fc0-97d1-0e39ea3b7830",
+			"name": "Medieval Fantasy Book",
+			"attribution": "https://sketchfab.com/stefan.lengyel1; License: Creative Commons Attribution",
+			"path": "scenes/medieval_fantasy_book/scene.gltf",
+			"category": "scenes"
+		},
+		{
+			"id": "sa37a98a-d606-4fc0-97d1-0e39ea3b7830",
+			"name": "Happy Halloween",
+			"attribution": "https://sketchfab.com/JessSwynn; License: Creative Commons Attribution",
+			"path": "scenes/happy_halloween/scene.gltf",
+			"category": "scenes"
+		}
+	]
+}
