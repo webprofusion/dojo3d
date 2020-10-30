@@ -7,10 +7,36 @@
     <style>
         body {
             margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
         canvas {
             display: block;
+        }
+
+        #stats {
+
+            z-index: 100;
+            border: 1px solid whitesmoke;
+            color: whitesmoke;
+            background-color: black;
+            display: none;
+        }
+
+        #msgbox {
+            position: absolute;
+            z-index: 100;
+            border: 1px solid rgba(0, 0, 0, 0.534);
+            width: 30%;
+            height: 10%;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            background-color: #f3f3f366;
+            padding: 1em;
+            border-radius: 16px;
+            color: white;
+            box-shadow: 2px 2px 9px 3px #54545487;
+            margin-top: 50px;
+            display: none;
         }
     </style>
 
@@ -18,27 +44,30 @@
 </head>
 
 <body>
+    <div id="msgbox"></div>
+    <div id="stats">camera stats</div>
+
     <script>
-
-
         var world = new dojo3d.World();
+        var ui = dojo3d.UI;
 
         world.fetchPrefabModels().then(async () => {
 
-            //world.create();
             world.setupLights();
-            //world.addGround();
 
+            setInterval(() => {
+                var camerapos = world.getCameraPositionAndDirection();
+
+                var positionString = `Camera {dx:${camerapos.direction.x.toFixed(3)},dy:${camerapos.direction.y.toFixed(3)},dz:${camerapos.direction.z.toFixed(3)},x:${camerapos.position.x.toFixed(3)},y:${camerapos.position.y.toFixed(3)},z:${camerapos.position.z.toFixed(3)}}`;
+                console.log(positionString);
+                document.getElementById("stats").innerHTML = positionString;
+            }, 1000);
 
             // prefab models:
             // "Box Man", "Phoenix Bird", "Hover Bike (The Rocket)","Wipeout 4K"
 
-            //var model = world.getPrefabModelByName("Hover Bike (The Rocket)");
-            //var obj = await world.addSceneObject(model, 0.05);
-            //obj.setScale(0.001);
-
-            var boxMan = world.getPrefabModelByName("Box Man");
-            await world.addSceneObject(boxMan, 0.1);
+            //var boxMan = world.getPrefabModelByName("Box Man");
+            //await world.addSceneObject(boxMan, 0.1);
 
             //var bookScene = world.getPrefabModelByName("Medieval Fantasy Book");
             //obj = await world.addSceneObject(bookScene, 0.1);
@@ -46,11 +75,39 @@
             var scene = world.getPrefabModelByName("Happy Halloween");
             obj = await world.addSceneObject(scene, 0.1);
 
+            var viewpoints = [
+                { title: "One", position: { x: 0.000, y: 0.000, z: 5.000 } },
+                { title: "House", position: { x: 0.059, y: 0.255, z: 1.099 } },
+                { title: "Spider", position: { x: 0.050, y: 0.480, z: 0.424 } }
+            ];
+
+            world.setViewpoints(viewpoints);
+
+            // show intro message
+            ui.showMessage("Hello..", 10, 10);
+
+            //set camera position
+            world.setCameraViewpoint("One");
+
+            //wait a few seconds
+            await ui.wait(3);
+
+            // welcome
+            ui.showMessage("Welcome..", 30, 10);
+            world.setCameraViewpoint("House");
+            await ui.wait(3);
+
+            // spider
+            world.setCameraViewpoint("Spider");
+            ui.showMessage("My name is Spidey. Wakanda forever...", 30, 10);
+            await ui.wait(3);
+
+            // finished
+            world.setCameraViewpoint("One");
+            ui.showMessage("Goodbye", 80, 100);
+
+
         });
-
-
-            //world.LoadModel("https://dojo3d.s3.us-east-1.amazonaws.com/models/characters/phoenix_bird/scene.gltf", 0.005);
-
 
     </script>
 

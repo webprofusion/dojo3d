@@ -1,9 +1,14 @@
-import { AnimationMixer, BoxGeometry, DirectionalLight, Mesh, MeshStandardMaterial, PerspectiveCamera, PlaneBufferGeometry, Scene, sRGBEncoding, WebGLRenderer } from 'three';
+import { AnimationMixer, BoxGeometry, DirectionalLight, Mesh, MeshStandardMaterial, PerspectiveCamera, PlaneBufferGeometry, Scene, sRGBEncoding, Vector3, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { Model, ModelCatalog } from './Model';
 import { SceneObject } from './SceneObject';
 //import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader'
+
+export interface Viewpoint {
+  title: string
+  position: Vector3;
+}
 
 class World {
 
@@ -23,6 +28,8 @@ class World {
   prevTime = 0;
 
   assetsBaseUrl = "https://dojo3d.s3.amazonaws.com/";
+
+  viewpoints: Viewpoint[] = [];
 
   log(msg: string) {
     console.log(msg);
@@ -221,6 +228,22 @@ class World {
     this.renderer.render(this.scene, this.camera);
 
     this.prevTime = time;
+  }
+
+  getCameraPositionAndDirection() {
+    return {
+      direction: this.camera.getWorldDirection(this.controls.center.clone()),
+      position: this.camera.getWorldPosition(this.controls.center.clone())
+    }
+  }
+
+  setCameraViewpoint(title: string) {
+    const viewpoint = this.viewpoints.find(v => v.title == title).position;
+    this.camera.position.set(viewpoint.x, viewpoint.y, viewpoint.z);
+  }
+
+  setViewpoints(viewpoints: Viewpoint[]) {
+    this.viewpoints = viewpoints;
   }
 
 }
