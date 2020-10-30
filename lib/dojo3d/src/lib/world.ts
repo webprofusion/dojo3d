@@ -3,6 +3,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { Model, ModelCatalog } from './Model';
 import { SceneObject } from './SceneObject';
+//import TWEEN from '@tweenjs/tween.js';
+
 //import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader'
 
 export interface Viewpoint {
@@ -242,6 +244,32 @@ class World {
     this.camera.position.set(viewpoint.x, viewpoint.y, viewpoint.z);
   }
 
+  /*
+  async animateToViewpoint(title: string, timeSeconds: number = 3) {
+    const viewpoint = this.viewpoints.find(v => v.title == title).position;
+
+    //this.sceneRenderer.setCameraTarget(this.productModelGroup.position.clone());
+
+    return new Promise<any>((resolve, reject) => {
+
+      new TWEEN.Tween(this.camera.position)
+        .to(viewpoint, timeSeconds)
+        .easing(TWEEN.Easing.Cubic.InOut)
+        // .onUpdate(t => {
+        // required for smooth camera update
+        // if (t < 1800)
+
+
+        // })
+        .start()
+        .onComplete(() => {
+          resolve(true);
+        });
+    }
+
+    );
+  }
+*/
   setViewpoints(viewpoints: Viewpoint[]) {
     this.viewpoints = viewpoints;
   }

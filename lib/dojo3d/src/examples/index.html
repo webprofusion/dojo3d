@@ -55,13 +55,14 @@
 
             world.setupLights();
 
+            /*
             setInterval(() => {
                 var camerapos = world.getCameraPositionAndDirection();
 
                 var positionString = `Camera {dx:${camerapos.direction.x.toFixed(3)},dy:${camerapos.direction.y.toFixed(3)},dz:${camerapos.direction.z.toFixed(3)},x:${camerapos.position.x.toFixed(3)},y:${camerapos.position.y.toFixed(3)},z:${camerapos.position.z.toFixed(3)}}`;
                 console.log(positionString);
                 document.getElementById("stats").innerHTML = positionString;
-            }, 1000);
+            }, 1000);*/
 
             // prefab models:
             // "Box Man", "Phoenix Bird", "Hover Bike (The Rocket)","Wipeout 4K"
@@ -87,22 +88,25 @@
             ui.showMessage("Hello..", 10, 10);
 
             //set camera position
+            //await world.animateToViewpoint("One");
             world.setCameraViewpoint("One");
 
             //wait a few seconds
             await ui.wait(3);
 
             // welcome
-            ui.showMessage("Welcome..", 30, 10);
+            ui.showMessage("Welcome this is a story about a creepy house..", 30, 10);
             world.setCameraViewpoint("House");
-            await ui.wait(3);
+            await ui.wait(10);
 
             // spider
+            //await world.animateToViewpoint("Spider");
             world.setCameraViewpoint("Spider");
             ui.showMessage("My name is Spidey. Wakanda forever...", 30, 10);
             await ui.wait(3);
 
             // finished
+            //await world.animateToViewpoint("One");
             world.setCameraViewpoint("One");
             ui.showMessage("Goodbye", 80, 100);
 
