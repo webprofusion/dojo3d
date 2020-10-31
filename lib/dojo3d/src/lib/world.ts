@@ -3,9 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { Model, ModelCatalog } from './Model';
 import { SceneObject } from './SceneObject';
-//import TWEEN from '@tweenjs/tween.js';
-
-//import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader'
+import TWEEN from '@tweenjs/tween.js';
 
 export interface Viewpoint {
   title: string
@@ -32,6 +30,7 @@ class World {
   assetsBaseUrl = "https://dojo3d.s3.amazonaws.com/";
 
   viewpoints: Viewpoint[] = [];
+  sceneCenter: Vector3 = new Vector3(0, 0, 0);
 
   log(msg: string) {
     console.log(msg);
@@ -92,6 +91,16 @@ class World {
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
       this.render(0);
+
+      // report camera pos
+
+      setInterval(() => {
+        const camerapos = this.camera.getWorldPosition(this.sceneCenter);
+
+        const positionString = `{x:${camerapos.x.toFixed(3)},y:${camerapos.y.toFixed(3)},z:${camerapos.z.toFixed(3)}}`;
+        this.log(positionString);
+        document.getElementById("stats").innerHTML = positionString;
+      }, 3000);
     }
   }
 
@@ -181,7 +190,7 @@ class World {
         // called while loading is progressing
         (xhr) => {
 
-          console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+          this.log((xhr.loaded / xhr.total * 100) + '% loaded');
 
         },
         // called when loading has errors
@@ -217,6 +226,7 @@ class World {
   public render(time) {
     requestAnimationFrame((t) => {
       this.render(t);
+      TWEEN.update(t);
     });
 
     this.controls.update();
@@ -240,36 +250,84 @@ class World {
   }
 
   setCameraViewpoint(title: string) {
+    this.log("jumping to viewpoint " + title);
+
     const viewpoint = this.viewpoints.find(v => v.title == title).position;
     this.camera.position.set(viewpoint.x, viewpoint.y, viewpoint.z);
   }
 
-  /*
-  async animateToViewpoint(title: string, timeSeconds: number = 3) {
-    const viewpoint = this.viewpoints.find(v => v.title == title).position;
+  animateToViewpoint(title: string, timeSeconds: number = 1) {
 
+    this.log("animating to viewpoint " + title);
+
+    const view = this.viewpoints.find(v => v.title == title).position;
+    const viewpoint = new Vector3(view.x, view.y, view.z);
+
+    //await new Promise(r => setTimeout(r, timeSeconds * 1000));
+
+    //this.setCameraViewpoint(title);
     //this.sceneRenderer.setCameraTarget(this.productModelGroup.position.clone());
 
+    var cameraPos = this.camera.position.clone();
+
+    if (viewpoint.equals(cameraPos)) {
+      this.log("nothing to tween, skipping.");
+      return;
+    }
+
+    this.log("About to animate..." + JSON.stringify(viewpoint));
+    //new Promise<any>(resolve => {
+
+    this.log("tween from " + JSON.stringify(cameraPos));
+    this.log("tween to " + JSON.stringify(viewpoint));
+
     return new Promise<any>((resolve, reject) => {
-
-      new TWEEN.Tween(this.camera.position)
-        .to(viewpoint, timeSeconds)
+      new TWEEN.Tween(cameraPos)
+        .to(viewpoint, timeSeconds * 1000)
         .easing(TWEEN.Easing.Cubic.InOut)
-        // .onUpdate(t => {
-        // required for smooth camera update
-        // if (t < 1800)
+        .onUpdate((o, e) => {
+          this.log("animating " + cameraPos);
+          // required for smooth camera update
+          this.camera.position.x = cameraPos.x;
+          this.camera.position.y = cameraPos.y;
+          this.camera.position.z = cameraPos.z;
 
-
-        // })
+        })
         .start()
         .onComplete(() => {
           resolve(true);
         });
-    }
+    });
 
-    );
+
+    this.log("got here");
+    // resolve(true);
+    // });
+
+
+    /* var cameraPos = new Vector3().copy(this.camera.position);
+ 
+     new Promise<any>(resolve => {
+ 
+       new TWEEN.Tween(cameraPos)
+         .to(viewpoint, timeSeconds)
+         .easing(TWEEN.Easing.Cubic.InOut)
+         .onUpdate(() => {
+           // required for smooth camera update
+           this.camera.position.x = cameraPos.x;
+           this.camera.position.y = cameraPos.y;
+           this.camera.position.z = cameraPos.z;
+         }
+         )
+         .start()
+         .onComplete(() => {
+           resolve(true);
+         });
+     }
+ 
+     );*/
   }
-*/
+
   setViewpoints(viewpoints: Viewpoint[]) {
     this.viewpoints = viewpoints;
   }
