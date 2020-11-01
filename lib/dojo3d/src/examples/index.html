@@ -3,68 +3,18 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Dojo 3D</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        canvas {
-            display: block;
-        }
-
-        #stats {
-
-            z-index: 100;
-            border: 1px solid whitesmoke;
-            color: whitesmoke;
-            background-color: black;
-            display: none;
-        }
-
-        #msgbox {
-            position: absolute;
-            z-index: 100;
-            border: 1px solid rgba(0, 0, 0, 0.534);
-            width: 30%;
-            min-height: 10%;
-            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-            background-color: #f3f3f366;
-            padding: 1em;
-            border-radius: 16px;
-            color: white;
-            box-shadow: 2px 2px 9px 3px #54545487;
-            margin-top: 50px;
-            display: none;
-        }
-    </style>
-
+    <title>Dojo 3D - Story Book</title>
     <script src="../../build/index.js"></script>
+    <link rel="stylesheet" href="dojo3d.css">
 </head>
 
 <body>
-    <div id="msgbox"></div>
-    <div id="stats">camera stats</div>
 
     <script>
         var world = new dojo3d.World();
         var ui = dojo3d.UI;
 
         world.fetchPrefabModels().then(async () => {
-
-            world.setupLights();
-
-
-
-            // prefab models:
-            // "Box Man", "Phoenix Bird", "Hover Bike (The Rocket)","Wipeout 4K"
-
-            //var boxMan = world.getPrefabModelByName("Box Man");
-            //await world.addSceneObject(boxMan, 0.1);
-
-            //var bookScene = world.getPrefabModelByName("Medieval Fantasy Book");
-            //await world.addSceneObject(bookScene, 0.1);
 
             var scene = world.getPrefabModelByName("Happy Halloween");
             obj = await world.addSceneObject(scene, 0.1);
@@ -77,50 +27,44 @@
                 { title: "Back Upstairs", position: { x: -0.066, y: 0.567, z: -0.438 } },
                 { title: "The Ghost", position: { x: -0.139, y: 0.142, z: -0.466 } },
                 { title: "RIP", position: { x: -0.216, y: 0.005, z: 0.570 } },
-
-
-
-
+                { title: "Cat", position: { x: -0.028, y: -0.071, z: 0.826 } }
             ];
 
             world.setViewpoints(viewpoints);
 
-            world.setCameraViewpoint("One");
+            world.setCameraViewpoint("Cat");
+
+            world.addLights();
 
             // show intro message
             ui.showMessage("Hello..", 10, 10);
+
             await world.animateToViewpoint("One");
-
-            //world.fx.fadeOut(1);
-            //world.fx.fadeIn(1)
-
 
             //wait a few seconds
             await ui.wait(3);
 
             // welcome
-            ui.showMessage("Welcome this is a story about a creepy house..", 30, 10);
-            await world.animateToViewpoint("House", 5);
+            ui.showMessage("Welcome to this story about a creepy house..", 30, 10);
 
+            await world.animateToViewpoint("House", 5);
             await ui.wait(3);
 
             // spider
-            //await world.animateToViewpoint("Spider");
-
             await world.animateToViewpoint("Spider");
             ui.showMessage("What will this story be about, you decide...", 30, 10);
             await ui.wait(3);
 
             // finished
-            //await world.animateToViewpoint("One");
             await world.animateToViewpoint("One");
             ui.showMessage("Goodbye.", 80, 100);
 
+            // take a look around..
 
-            await world.animateToViewpoint("Back Of House");
-            await world.animateToViewpoint("Back Upstairs");
-            await world.animateToViewpoint("The Ghost");
-            await world.animateToViewpoint("RIP", 10);
+            // await world.animateToViewpoint("Back Of House");
+            // await world.animateToViewpoint("Back Upstairs");
+            // await world.animateToViewpoint("The Ghost");
+            // await world.animateToViewpoint("RIP", 10);
 
         });
 

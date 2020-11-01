@@ -32,6 +32,8 @@ class World {
   viewpoints: Viewpoint[] = [];
   sceneCenter: Vector3 = new Vector3(0, 0, 0);
 
+  lastLoggedCameraPos: Vector3 = null;
+
   log(msg: string) {
     console.log(msg);
   }
@@ -68,7 +70,7 @@ class World {
     return mesh;
   }
 
-  public setupLights() {
+  public addLights() {
     var dirLight = new DirectionalLight(0xffffff, 1);
     dirLight.position.set(5, 2, 8);
     this.scene.add(dirLight);
@@ -94,13 +96,20 @@ class World {
 
       // report camera pos
 
+      // log camera pos
       setInterval(() => {
         const camerapos = this.camera.getWorldPosition(this.sceneCenter);
+        if (this.lastLoggedCameraPos != camerapos) {
+          const positionString = `{x:${camerapos.x.toFixed(3)},y:${camerapos.y.toFixed(3)},z:${camerapos.z.toFixed(3)}}`;
+          this.log(positionString);
 
-        const positionString = `{x:${camerapos.x.toFixed(3)},y:${camerapos.y.toFixed(3)},z:${camerapos.z.toFixed(3)}}`;
-        this.log(positionString);
-        document.getElementById("stats").innerHTML = positionString;
+          const statsDiv = document.getElementById("stats");
+          if (statsDiv) {
+            statsDiv.innerHTML = positionString;
+          }
+        }
       }, 3000);
+
     }
   }
 
@@ -263,11 +272,6 @@ class World {
     const view = this.viewpoints.find(v => v.title == title).position;
     const viewpoint = new Vector3(view.x, view.y, view.z);
 
-    //await new Promise(r => setTimeout(r, timeSeconds * 1000));
-
-    //this.setCameraViewpoint(title);
-    //this.sceneRenderer.setCameraTarget(this.productModelGroup.position.clone());
-
     var cameraPos = this.camera.position.clone();
 
     if (viewpoint.equals(cameraPos)) {
@@ -275,19 +279,14 @@ class World {
       return;
     }
 
-    this.log("About to animate..." + JSON.stringify(viewpoint));
-    //new Promise<any>(resolve => {
-
-    this.log("tween from " + JSON.stringify(cameraPos));
-    this.log("tween to " + JSON.stringify(viewpoint));
 
     return new Promise<any>((resolve, reject) => {
       new TWEEN.Tween(cameraPos)
         .to(viewpoint, timeSeconds * 1000)
         .easing(TWEEN.Easing.Cubic.InOut)
         .onUpdate((o, e) => {
-          this.log("animating " + cameraPos);
-          // required for smooth camera update
+
+          // update camera position
           this.camera.position.x = cameraPos.x;
           this.camera.position.y = cameraPos.y;
           this.camera.position.z = cameraPos.z;
@@ -299,39 +298,11 @@ class World {
         });
     });
 
-
-    this.log("got here");
-    // resolve(true);
-    // });
-
-
-    /* var cameraPos = new Vector3().copy(this.camera.position);
- 
-     new Promise<any>(resolve => {
- 
-       new TWEEN.Tween(cameraPos)
-         .to(viewpoint, timeSeconds)
-         .easing(TWEEN.Easing.Cubic.InOut)
-         .onUpdate(() => {
-           // required for smooth camera update
-           this.camera.position.x = cameraPos.x;
-           this.camera.position.y = cameraPos.y;
-           this.camera.position.z = cameraPos.z;
-         }
-         )
-         .start()
-         .onComplete(() => {
-           resolve(true);
-         });
-     }
- 
-     );*/
   }
 
   setViewpoints(viewpoints: Viewpoint[]) {
     this.viewpoints = viewpoints;
   }
-
 }
 
 export { World }
