@@ -2,6 +2,8 @@
 
 An all-in-one library for 3D story telling, aimed at all ages of coder. Zero software installs required.
 
+![Example](screens/halloween.png)
+
 # Build
 
 - delete build folder
