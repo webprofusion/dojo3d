@@ -1,4 +1,5 @@
 export class UI {
+
     public static showMessage(msg: string, x: number, y: number) {
         let msgbox = document.getElementById("msgbox");
 
@@ -14,6 +15,13 @@ export class UI {
         msgbox.style.display = "block";
 
         msgbox.innerHTML = msg;
+    }
+
+    public static hideMessage() {
+        let msgbox = document.getElementById("msgbox");
+        if (msgbox) {
+            msgbox.style.display = "none";
+        }
     }
 
     public static async wait(seconds: number) {

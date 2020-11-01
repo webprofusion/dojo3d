@@ -258,10 +258,18 @@ class World {
     }
   }
 
-  setCameraViewpoint(title: string) {
+  setViewpoint(title: string) {
     this.log("jumping to viewpoint " + title);
 
-    const viewpoint = this.viewpoints.find(v => v.title == title).position;
+    const vp = this.viewpoints.find(v => v.title.toLowerCase() == title.toLowerCase());
+
+    if (!vp) {
+      this.log(`Viewpoint named ${title} not found`);
+      return;
+    }
+
+    const viewpoint = vp.position;
+
     this.camera.position.set(viewpoint.x, viewpoint.y, viewpoint.z);
   }
 
@@ -269,7 +277,14 @@ class World {
 
     this.log("animating to viewpoint " + title);
 
-    const view = this.viewpoints.find(v => v.title == title).position;
+    const vp = this.viewpoints.find(v => v.title.toLowerCase() == title.toLowerCase());
+
+    if (!vp) {
+      this.log(`Viewpoint named ${title} not found`);
+      return;
+    }
+
+    const view = vp.position;
     const viewpoint = new Vector3(view.x, view.y, view.z);
 
     var cameraPos = this.camera.position.clone();
@@ -302,6 +317,16 @@ class World {
 
   setViewpoints(viewpoints: Viewpoint[]) {
     this.viewpoints = viewpoints;
+  }
+
+  explainModels() {
+
+    this.log("Models available:");
+
+    for (let m of this.modelCatalog.models) {
+      this.log(`${m.name} (${m.category})`);
+    }
+
   }
 }
 
