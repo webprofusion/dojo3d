@@ -67,6 +67,18 @@ Jump straight to `Our main code for a simple story` to see the main story code.
         //wait a few seconds
         await ui.wait(3);
 
+        // ask a question, answer will be "The option value", and answer.optionNumber is the option number selected starting at 1 (1,2,3 etc).
+        let answer = await ui.ask("Why are your here?", [
+          "I don't know.",
+          "You sent for me.",
+        ]);
+
+        if (answer.optionNumber == 1) {
+          ui.showMessage("Hmm, lost are we..");
+        } else {
+          ui.showMessage("Hmm, I don't remember doing that..");
+        }
+
         // animate to viewpoint named "ZoomedOut"
         await world.animateToViewpoint("Cat");
       });
@@ -81,4 +93,4 @@ Jump straight to `Our main code for a simple story` to see the main story code.
 
 - `npx rollup -w -c rollup.config.js`
 
-- `npx http-server /src/examples` (localhost:8080)
+- `npx http-server ` (localhost:8080/src/examples)

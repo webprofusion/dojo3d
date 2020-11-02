@@ -87,6 +87,7 @@ class World {
       this.renderer.shadowMap.enabled = true;
 
       document.body.appendChild(this.renderer.domElement);
+      window.addEventListener('resize', () => { this.resize(); }, false);
 
       this.camera.position.z = 5;
 
@@ -111,6 +112,18 @@ class World {
       }, 3000);
 
     }
+  }
+
+  resize() {
+
+    const { clientHeight, clientWidth } = this.renderer.domElement.parentElement;
+
+    this.camera.aspect = clientWidth / clientHeight;
+    this.camera.updateProjectionMatrix();
+
+    this.renderer.setSize(clientWidth, clientHeight);
+
+    this.log(`Resized: ${clientWidth} ${clientHeight}`);
   }
 
   public async fetchPrefabModels() {
@@ -281,7 +294,7 @@ class World {
 
     if (!vp) {
       this.log(`Viewpoint named ${title} not found`);
-      return;
+      return false;
     }
 
     const view = vp.position;
@@ -291,7 +304,7 @@ class World {
 
     if (viewpoint.equals(cameraPos)) {
       this.log("nothing to tween, skipping.");
-      return;
+      return false;
     }
 
 

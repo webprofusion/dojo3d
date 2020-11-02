@@ -35,29 +35,37 @@
 
             world.setViewpoints(viewpoints);
 
-
+            //////////////
             // animate to viewpoint named "ZoomedOut"
             await world.animateToViewpoint("ZoomedOut");
-
             // show intro message box at x:10,y:10
             ui.showMessage("Hello..", 10, 10);
+            await ui.wait(3);
 
             //wait a few seconds
             await ui.wait(3);
 
+            // ask a question, answer will be "The option value", and answer.optionNumber is the option number selected starting at 1 (1,2,3 etc).
+            let answer = await ui.ask("Why are your here?", ["I don't know.", "You sent for me."]);
+            if (answer.optionNumber == 1) {
+                ui.showMessage("Hmm, lost are we..");
+            } else {
+                ui.showMessage("Hmm, I don't remember doing that..");
+            }
+
             // welcome
             await world.animateToViewpoint("House", 5);
-            ui.showMessage("Welcome to this story about a creepy house..", 30, 10);
+            ui.showMessage("Welcome to this story about a creepy house..");
             await ui.wait(3);
 
             // spider
             await world.animateToViewpoint("Spider");
-            ui.showMessage("What will this story be about, you decide...", 30, 10);
+            ui.showMessage("What will this story be about, you decide...", 10, 10);
             await ui.wait(3);
 
             // finished
             await world.animateToViewpoint("ZoomedOut");
-            ui.showMessage("Goodbye.", 80, 100);
+            ui.showMessage("Goodbye.", 25, 25);
 
             await ui.wait(3);
             ui.hideMessage();
