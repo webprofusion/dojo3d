@@ -1,20 +1,12 @@
 # Dojo3D
 
-An all-in-one library for 3D story telling, aimed at all ages of coder. Zero software installs required.
+An all-in-one library for 3D story telling, aimed at all ages of coder. No software installation required, useful for CoderDojo, Hour of Code activities etc.
 
 ![Example](screens/halloween.png)
 
-# Build
-
-- delete build folder
-
-- `npx rollup -w -c rollup.config.js`
-
-- `npx http-server /src/examples` (localhost:8080)
-
 # Example Library Usage
 
-See also https://repl.it/@webprofusionchr/dojo3d-halloween
+See the Happy Halloween example https://repl.it/@webprofusionchr/dojo3d-halloween
 
 Jump straight to `Our main code for a simple story` to see the main story code.
 
@@ -40,6 +32,7 @@ Jump straight to `Our main code for a simple story` to see the main story code.
       //fetch 3d models we can use, then do our main code
       world.fetchPrefabModels().then(async () => {
         // get the Happy Halloween scene model, add it to the scene at scale 0.1
+        // https://sketchfab.com/JessSwynn; License: Creative Commons Attribution
         var scene = world.getPrefabModelByName("Happy Halloween");
         obj = await world.addSceneObject(scene, 0.1);
 
@@ -81,3 +74,11 @@ Jump straight to `Our main code for a simple story` to see the main story code.
   </body>
 </html>
 ```
+
+# Building/testing the library from source
+
+- delete build folder
+
+- `npx rollup -w -c rollup.config.js`
+
+- `npx http-server /src/examples` (localhost:8080)
