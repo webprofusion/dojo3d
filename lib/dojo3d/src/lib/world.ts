@@ -46,6 +46,10 @@ class World {
     }
   }
 
+  public setAssetsBaseUrl(url: string) {
+    this.assetsBaseUrl = url;
+  }
+
   public addCube(w = 1, h = 1, d = 1, x = 0, y = 0, z = 0) {
     this.log(`Creating and adding cube w:${w},h:${h},d:${d} at x:${x},y:${y},z:${z}`);
 

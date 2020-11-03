@@ -87,6 +87,11 @@ Jump straight to `Our main code for a simple story` to see the main story code.
 </html>
 ```
 
+# Other Examples
+
+[Low Poly Terrain Scene](https://repl.it/@webprofusionchr/amongyou)
+![Among You](screens/amongyou.png)
+
 # Building/testing the library from source
 
 - delete build folder

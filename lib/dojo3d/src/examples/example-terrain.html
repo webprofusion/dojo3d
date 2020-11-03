@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Dojo 3D - Story Book</title>
+    <script src="../../build/index.js"></script>
+    <link rel="stylesheet" href="dojo3d.css">
+</head>
+
+<body>
+
+    <script>
+        var world = new dojo3d.World();
+        var ui = dojo3d.UI;
+
+        world.fetchPrefabModels().then(async () => {
+
+            // https://sketchfab.com/Jordi_Martos77; License: Creative Commons Attribution
+            var scene = world.getPrefabModelByName("Terrain 01 - Low Poly");
+            await world.addSceneObject(scene, 0.1);
+
+            // https://sketchfab.com/juang3d; License: Creative Commons Attribution
+            var character = world.getPrefabModelByName("Among");
+            obj = await world.addSceneObject(character, 0.01);
+            obj.setPosition(-20, 5, 25);
+            world.addLights();
+
+            // define camera viewpoints
+            var viewpoints = [
+                { title: "ZoomedOut", position: { x: 29.456, y: 3.715, z: 53.658 } },
+                { title: "Character 1", position: { x: -25.304, y: 4.454, z: 31.544 } }
+            ];
+
+            world.setViewpoints(viewpoints);
+
+            //////////////
+            // animate to viewpoint 
+            await world.animateToViewpoint("Character 1");
+
+            // show intro message box
+
+            let answer = await ui.ask("Hi, you're new around here, what are you looking for?", ["Some diamond armour 💎", "A chug jug 🥛", "Your boots 👢, your clothes 👖 and your motorcycle 🛵."]);
+
+            if (answer.optionNumber == 1) {
+                ui.showMessage("Uh, yeah right. I don't think so.");
+            } else if (answer.optionNumber == 2) {
+                ui.showMessage("Do I look like I serve drinks?");
+            } else if (answer.optionNumber == 3) {
+                ui.showMessage("Yeah, Hasta la vista to you to..");
+
+            }
+
+            //wait a few seconds
+            await world.animateToViewpoint("ZoomedOut", 10);
+
+            ui.hideMessage();
+        });
+
+    </script>
+
+</body>
+
+</html>

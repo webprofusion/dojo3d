@@ -20,6 +20,20 @@
 			"category": "characters"
 		},
 		{
+			"id": "6a37a98a-d606-4fc0-97d1-0ea9ea3b7830",
+			"name": "Banana Man",
+			"attribution": "https://sketchfab.com/chuchodorado416; License: Creative Commons Attribution",
+			"path": "characters/banana_dancing_fortnite/scene.gltf",
+			"category": "characters"
+		},
+		{
+			"id": "5a37a98a-d606-4fc0-97d1-0ea9ea3b7830",
+			"name": "Among",
+			"attribution": "https://sketchfab.com/juang3d; License: Creative Commons Attribution",
+			"path": "characters/among_us_character/scene.gltf",
+			"category": "characters"
+		},
+		{
 			"id": "9d37a98a-d606-4fc0-97d1-0e19ea3b7830",
 			"name": "Hover Bike (The Rocket)",
 			"attribution": "https://sketchfab.com/TuppsM; License: Creative Commons Attribution",
@@ -45,6 +59,13 @@
 			"name": "Happy Halloween",
 			"attribution": "https://sketchfab.com/JessSwynn; License: Creative Commons Attribution",
 			"path": "scenes/happy_halloween/scene.gltf",
+			"category": "scenes"
+		},
+		{
+			"id": "aa37a98a-d606-4fc0-97d1-0e39ea3b7830",
+			"name": "Terrain 01 - Low Poly",
+			"attribution": "https://sketchfab.com/Jordi_Martos77; License: Creative Commons Attribution",
+			"path": "scenes/terrain_low_poly/scene.gltf",
 			"category": "scenes"
 		}
 	]
