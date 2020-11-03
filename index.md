@@ -1,37 +1,88 @@
-## Welcome to GitHub Pages
+# Dojo3D
 
-You can use the [editor on GitHub](https://github.com/webprofusion/dojo3d/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+An all-in-one library for 3D story telling, aimed at all ages of coder. No software installation required, useful for CoderDojo, Hour of Code activities etc.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+![Example](screens/halloween.png)
 
-### Markdown
+# Example Library Usage
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+See the Happy Halloween example https://repl.it/@webprofusionchr/dojo3d-halloween
 
-```markdown
-Syntax highlighted code block
+Jump straight to `Our main code for a simple story` to see the main story code.
 
-# Header 1
-## Header 2
-### Header 3
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Dojo 3D - Example Story Book</title>
+    <script src="https://dojo3d.webprofusion.com/v1/dojo3d.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://dojo3d.webprofusion.com/v1/dojo3d.css"
+    />
+  </head>
 
-- Bulleted
-- List
+  <body>
+    <script>
+      // create world
+      var world = new dojo3d.World();
+      var ui = dojo3d.UI;
 
-1. Numbered
-2. List
+      //fetch 3d models we can use, then do our main code
+      world.fetchPrefabModels().then(async () => {
+        // get the Happy Halloween scene model, add it to the scene at scale 0.1
+        // https://sketchfab.com/JessSwynn; License: Creative Commons Attribution
+        var scene = world.getPrefabModelByName("Happy Halloween");
+        obj = await world.addSceneObject(scene, 0.1);
 
-**Bold** and _Italic_ and `Code` text
+        //turn some lights on
+        world.addLights();
 
-[Link](url) and ![Image](src)
+        // define camera viewpoints so we can use them later
+        var viewpoints = [
+          { title: "ZoomedOut", position: { x: 0.0, y: 0.0, z: 5.0 } },
+          { title: "House", position: { x: 0.059, y: 0.255, z: 1.099 } },
+          { title: "Spider", position: { x: 0.05, y: 0.58, z: 0.424 } },
+          { title: "BackHouse", position: { x: 0.041, y: 0.463, z: -1.731 } },
+          {
+            title: "BackUpstairs",
+            position: { x: -0.066, y: 0.567, z: -0.438 },
+          },
+          { title: "Ghost", position: { x: -0.139, y: 0.142, z: -0.466 } },
+          { title: "RIP", position: { x: -0.216, y: 0.005, z: 0.57 } },
+          { title: "Cat", position: { x: -0.028, y: -0.071, z: 0.826 } },
+        ];
+
+        world.setViewpoints(viewpoints);
+
+        /////////////////////////////////////////
+        // Our main code for a simple story
+        // animate to viewpoint named "ZoomedOut"
+        await world.animateToViewpoint("ZoomedOut");
+
+        // show intro message box at x:10,y:10
+        ui.showMessage("Hello..", 10, 10);
+
+        //wait a few seconds
+        await ui.wait(3);
+
+        // ask a question, answer will be "The option value", and answer.optionNumber is the option number selected starting at 1 (1,2,3 etc).
+        let answer = await ui.ask("Why are your here?", [
+          "I don't know.",
+          "You sent for me.",
+        ]);
+
+        if (answer.optionNumber == 1) {
+          ui.showMessage("Hmm, lost are we..");
+        } else {
+          ui.showMessage("Hmm, I don't remember doing that..");
+        }
+
+        // animate to viewpoint named "ZoomedOut"
+        await world.animateToViewpoint("Cat");
+      });
+    </script>
+  </body>
+</html>
 ```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/webprofusion/dojo3d/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
