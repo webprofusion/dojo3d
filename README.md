@@ -2,7 +2,7 @@
 
 An all-in-one library for 3D story telling, aimed at all ages of coder. No software installation required, useful for CoderDojo, Hour of Code activities etc.
 
-![Example](screens/halloween.png)
+![Example](docs/screens/halloween.png)
 
 # Example Library Usage
 
@@ -90,7 +90,7 @@ Jump straight to `Our main code for a simple story` to see the main story code.
 # Other Examples
 
 [Low Poly Terrain Scene](https://repl.it/@webprofusionchr/amongyou)
-![Among You](screens/amongyou.png)
+![Among You](docs/screens/amongyou.png)
 
 # Building/testing the library from source
 
