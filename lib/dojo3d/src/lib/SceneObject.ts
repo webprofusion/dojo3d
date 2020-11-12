@@ -1,12 +1,21 @@
 import { Model } from "./Model";
-import { Object3D } from "three";
+import { AnimationMixer } from "three";
+import { LoadedModel } from "./World";
 
 export class SceneObject {
 
     public update: () => void;
 
-    constructor(public model: Model, public obj: Object3D) {
+    mixer: AnimationMixer;
+    clips: any;
+    obj: any;
 
+    constructor(public loadedModel: LoadedModel, public definition: Model,) {
+        this.obj = loadedModel.obj;
+        this.clips = loadedModel.animationClips;
+
+        this.setClips(this.obj, this.clips);
+        this.playAllClips();
     }
 
     setPosition(x: number, y: number, z: number) {
@@ -21,5 +30,31 @@ export class SceneObject {
         this.obj.rotateX(x);
         this.obj.rotateY(y);
         this.obj.rotateZ(z);
+    }
+
+    onUpdate(timeDelta) {
+        if (this.mixer) {
+            this.mixer.update(timeDelta);
+        }
+    }
+
+    setClips(obj, clips) {
+        if (this.mixer) {
+            this.mixer.stopAllAction();
+            this.mixer.uncacheRoot(this.mixer.getRoot());
+            this.mixer = null;
+        }
+
+        this.clips = clips;
+        if (!clips.length) return;
+
+        this.mixer = new AnimationMixer(obj);
+    }
+
+    playAllClips() {
+        this.clips.forEach((clip) => {
+            this.mixer.clipAction(clip).reset().play();
+            // this.state.actionStates[clip.name] = true;
+        });
     }
 }

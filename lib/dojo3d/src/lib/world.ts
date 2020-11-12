@@ -1,4 +1,4 @@
-import { AnimationMixer, BoxGeometry, DirectionalLight, Mesh, MeshStandardMaterial, PerspectiveCamera, PlaneBufferGeometry, Scene, sRGBEncoding, Vector3, WebGLRenderer } from 'three';
+import { BoxGeometry, DirectionalLight, Mesh, MeshStandardMaterial, PerspectiveCamera, PlaneBufferGeometry, Scene, sRGBEncoding, Vector3, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { Model, ModelCatalog } from './Model';
@@ -10,14 +10,17 @@ export interface Viewpoint {
   position: Vector3;
 }
 
+export interface LoadedModel {
+  obj: any;
+  animationClips: any;
+}
+
 class World {
 
   scene: Scene;
   camera: PerspectiveCamera;
   renderer: WebGLRenderer;
   controls: OrbitControls;
-  mixer: AnimationMixer;
-  clips: any;
 
   modelCatalog: ModelCatalog;
 
@@ -150,24 +153,37 @@ class World {
     return this.modelCatalog.models.find(m => m.name == name);
   }
 
-  public async addSceneObject(model: Model, scale = 1) {
+  public async addSceneObject(definition: Model, scale = 1) {
 
-    let url = model.path;
+    let url = definition.path;
 
     if (!url.startsWith("http")) {
-      url = this.assetsBaseUrl + "models/" + model.path;
+      url = this.assetsBaseUrl + "models/" + definition.path;
     }
 
-    const obj = await this.loadModel(url, scale);
+    const loadedModel = await this.loadModel(url, true, scale);
 
-    var sceneObject = new SceneObject(model, obj);
+    var sceneObject = new SceneObject(loadedModel, definition);
 
     this.sceneObjects.push(sceneObject);
 
     return sceneObject;
   }
 
-  public async loadModel(gltf: string, scale = 1): Promise<any> {
+  public async addSceneModelAsObject(m: LoadedModel, scale = 1) {
+
+
+    m.obj.scale.set(scale, scale, scale);
+    this.scene.add(m.obj);
+
+    var sceneObject = new SceneObject(m, null);
+
+    this.sceneObjects.push(sceneObject);
+
+    return sceneObject;
+  }
+
+  public async loadModel(gltf: string, addModelToScene: boolean = true, scale = 1): Promise<LoadedModel> {
     var loader = new GLTFLoader();
 
     // var dracoLoader = new DRACOLoader();
@@ -190,28 +206,29 @@ class World {
           //scale new scene
           scene.scale.set(scale, scale, scale);
 
-          this.setClips(scene, clips);
-          /*
-          gltf.animations; // Array<THREE.AnimationClip>
-          gltf.scene; // THREE.Group
-          gltf.scenes; // Array<THREE.Group>
-          gltf.cameras; // Array<THREE.Camera>
-          gltf.asset; // Object
-          */
+          if (addModelToScene) {
 
-          this.playAllClips();
+            /*
+            gltf.animations; // Array<THREE.AnimationClip>
+            gltf.scene; // THREE.Group
+            gltf.scenes; // Array<THREE.Group>
+            gltf.cameras; // Array<THREE.Camera>
+            gltf.asset; // Object
+            */
 
-          gltf.scene.scale.set(scale, scale, scale);
 
-          this.scene.add(gltf.scene);
+            gltf.scene.scale.set(scale, scale, scale);
 
-          gltf.animations; // Array<THREE.AnimationClip>
-          gltf.scene; // THREE.Group
-          gltf.scenes; // Array<THREE.Group>
-          gltf.cameras; // Array<THREE.Camera>
-          gltf.asset; // Object
+            this.scene.add(gltf.scene);
 
-          resolve(gltf.scene);
+            gltf.animations; // Array<THREE.AnimationClip>
+            gltf.scene; // THREE.Group
+            gltf.scenes; // Array<THREE.Group>
+            gltf.cameras; // Array<THREE.Camera>
+            gltf.asset; // Object
+          }
+
+          resolve({ obj: scene, animationClips: clips });
         },
         // called while loading is progressing
         (xhr) => {
@@ -229,25 +246,7 @@ class World {
     });
   }
 
-  setClips(obj, clips) {
-    if (this.mixer) {
-      this.mixer.stopAllAction();
-      this.mixer.uncacheRoot(this.mixer.getRoot());
-      this.mixer = null;
-    }
 
-    this.clips = clips;
-    if (!clips.length) return;
-
-    this.mixer = new AnimationMixer(obj);
-  }
-
-  playAllClips() {
-    this.clips.forEach((clip) => {
-      this.mixer.clipAction(clip).reset().play();
-      // this.state.actionStates[clip.name] = true;
-    });
-  }
 
   public render(time) {
     requestAnimationFrame((t) => {
@@ -259,9 +258,11 @@ class World {
 
     this.renderer.render(this.scene, this.camera);
 
-    const dt = (time - this.prevTime) / 1000;
+    const deltaTime = (time - this.prevTime) / 1000;
 
-    this.mixer && this.mixer.update(dt);
+    for (let o of this.sceneObjects) {
+      o.onUpdate(deltaTime);
+    }
 
     this.renderer.render(this.scene, this.camera);
 
